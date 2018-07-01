@@ -109,13 +109,15 @@ h1 {
     float: right;
     cursor: pointer;
 }
+/*
+ * Media Queries
+ */
 
 @media only screen and (max-width: 630px) {
     .deck .card {
-   width:100px;
-   height:100px;
+       width:100px;
+       height:100px;
     }
-
     .deck{
        min-height:500px;
        width:500px;
@@ -124,15 +126,13 @@ h1 {
 
 @media only screen and (max-width: 520px) {
     .deck .card {
-   width:60px;
-   height:60px;
+       width:60px;
+       height:60px;
     }
-
     .deck{
        min-height:370px;
        width:340px;
     }
-
     .score-panel{
         max-width:240px;
     }
@@ -141,17 +141,15 @@ h1 {
 
 @media only screen and (max-width: 350px) {
     .deck .card {
-   width:55px;
-   height:55px;
+       width:55px;
+       height:55px;
     }
-
     .deck{
        min-height:300px;
        width:280px;
        padding:15px;
     }
-
     .score-panel{
-        max-width:170px;
+       max-width:170px;
     }
 }

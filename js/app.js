@@ -1,7 +1,7 @@
 /*
  * Create a list that holds all of your cards
  */
-
+let cardsOfArray = ['fa-diamond', 'fa-paper-plane-o', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
 
 /*
  * Display the cards on the page
@@ -25,6 +25,18 @@ function shuffle(array) {
     return array;
 }
 
+const shaffledCardsClasses = shuffle(cardsOfArray);
+const deck = document.querySelector("ul.deck");
+deck.innerHTML = '';
+
+for (const cardClass of shaffledCardsClasses) {
+    const cardElem = document.createElement('li');
+    cardElem.classList.add('card');
+    const icon = document.createElement('i');
+    icon.classList.add('fa', cardClass);
+    cardElem.appendChild(icon);
+    deck.appendChild(cardElem);
+}
 
 /*
  * set up the event listener for a card. If a card is clicked:
