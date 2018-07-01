@@ -48,3 +48,51 @@ for (const cardClass of shaffledCardsClasses) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+
+const openCard = function (card) {
+    card.classList.add("open", "show");
+};
+const closeCard = function (card) {
+    card.classList.remove("open", "show");
+};
+let openedCardsArray = [];
+
+const cardElems = deck.children;
+for (const cardElem of cardElems) {
+    cardElem.addEventListener('click', function (event) {
+        const clickedCard = event.target;
+        const numberOfOpenedCard = function () {
+            return openedCardsArray.length;
+        };
+
+        if (numberOfOpenedCard() < 2) {
+            openedCardsArray.push(clickedCard);
+            openCard(clickedCard);
+        }
+
+        if (numberOfOpenedCard() === 2) {
+            const firstOpenedCardIcon = openedCardsArray[0].children[0];
+            const secondOpenedCardIcon = openedCardsArray[1].children[0];
+            const firstOpenedCardIconClasses = firstOpenedCardIcon.classList;
+            const secondOpenedCardIconClasses = secondOpenedCardIcon.classList;
+            let haveAllClasses = true;
+
+            for (const iconClass of firstOpenedCardIconClasses) {
+                if(!secondOpenedCardIconClasses.contains(iconClass)){
+                    haveAllClasses = false;
+                }
+            }
+
+            if(haveAllClasses && firstOpenedCardIconClasses.length === secondOpenedCardIconClasses.length ){
+                // leave and count
+            } else {
+                for (const openedCard of openedCardsArray) {
+                    closeCard(openedCard);
+                }
+            }
+            openedCardsArray = [];
+        }
+    });
+}
+
+
