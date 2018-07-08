@@ -1,6 +1,6 @@
 
 const HIDE_DELAY = 1000;
-const NEXT_CLICK_DELAY = 200;
+const NEXT_CLICK_DELAY = 300;
 let cardsOfArray = ['fa-diamond', 'fa-plane', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
 const deck = document.querySelector("ul.deck");
 const allCardsOpened = 16;
