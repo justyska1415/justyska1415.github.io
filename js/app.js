@@ -1,7 +1,5 @@
-/*
- * Create a list that holds all of your cards
- */
-const HIDE_DELAY = 500;
+
+const HIDE_DELAY = 1000;
 const NEXT_CLICK_DELAY = 200;
 let cardsOfArray = ['fa-diamond', 'fa-plane', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
 const deck = document.querySelector("ul.deck");
@@ -37,12 +35,6 @@ const clickBlocker = {
         return result;
     }
 }
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -76,16 +68,6 @@ function setupGame() {
 }
 setupGame();
 
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
 function setupCards(deck) {
     let openedCardsArray = [];
     const openCard = function (card) {
@@ -122,8 +104,10 @@ function setupCards(deck) {
             }
 
             if (openedCardsArray.length === 2) {
-                const firstOpenedCardIcon = openedCardsArray[0].children[0];
-                const secondOpenedCardIcon = openedCardsArray[1].children[0];
+                const firstCard =  openedCardsArray[0];
+                const secondCard = openedCardsArray[1];
+                const firstOpenedCardIcon = firstCard.children[0];
+                const secondOpenedCardIcon = secondCard.children[0];
                 const firstOpenedCardIconClasses = firstOpenedCardIcon.classList;
                 const secondOpenedCardIconClasses = secondOpenedCardIcon.classList;
                 let iconsHaveTheSameClasses = true;
@@ -141,15 +125,22 @@ function setupCards(deck) {
                             closeCard(openedCard);
                         }, HIDE_DELAY);
                     }
+                } else {
+                    firstCard.classList.remove('open');
+                    firstCard.classList.add('match');
+                    secondCard.classList.remove('open');
+                    secondCard.classList.add('match');
                 }
+
                 openedCardsArray = [];
+
             }
 
-           if(document.querySelectorAll("li.open").length === allCardsOpened){  
-              setTimeout(() => {
-              alert("CONGRATULATIONS!");}, HIDE_DELAY );
-                ;
-           }
+            if (document.querySelectorAll("li.match").length === allCardsOpened) {
+                setTimeout(() => {
+                    alert("CONGRATULATIONS!");
+                }, HIDE_DELAY);
+            }
         });
     }
 }

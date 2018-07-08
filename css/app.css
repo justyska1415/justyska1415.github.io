@@ -66,21 +66,56 @@ h1 {
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.5);
 }
 
+
 .deck .card.open {
     transform: rotateY(0);
     background: #02b3e4;
     cursor: default;
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    background: radial-gradient(#2ca4e9 0%, #0953a8 100%);
+    font-size: 33px;
+    -webkit-animation: rotateY 0.5s ease-in-out;
 }
+
+@-webkit-keyframes rotateY {
+		from {
+				-webkit-transform: rotateY(180deg);
+		}
+		to {
+				-webkit-transform: rotateY(0deg);
+		}
+}
+
 
 .deck .card.show {
     font-size: 33px;
 }
 
+
 .deck .card.match {
     cursor: default;
-    background: #9e6734;
+    background: radial-gradient(#ff8cb2 0%, #ffb7cf 100%);
     font-size: 33px;
+    animation:scale 1s ease-in-out;
+    -webkit-animation: scale 1s ease-in-out;
 }
+
+@-webkit-keyframes scale {
+    0% {
+        transform: scale(1.0);
+        -webkit-transform: scale(1.0);
+    }
+    50%{
+        transform: scale(1.2);
+        -webkit-transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1.0);
+        -webkit-transform: scale(1.0);
+    }
+}
+
 
 /*
  * Styles for the Score Panel
