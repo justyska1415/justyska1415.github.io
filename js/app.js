@@ -1,8 +1,8 @@
 /*
  * Create a list that holds all of your cards
  */
-let cardsOfArray = ['fa-diamond', 'fa-paper-plane-o', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
-
+let cardsOfArray = ['fa-diamond', 'fa-plane', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
+const HIDE_DELAY = 500;
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -61,38 +61,34 @@ const cardElems = deck.children;
 for (const cardElem of cardElems) {
     cardElem.addEventListener('click', function (event) {
         const clickedCard = event.target;
-        const numberOfOpenedCard = function () {
-            return openedCardsArray.length;
-        };
 
-        if (numberOfOpenedCard() < 2) {
+        if (openedCardsArray.length < 2) {
             openedCardsArray.push(clickedCard);
             openCard(clickedCard);
         }
 
-        if (numberOfOpenedCard() === 2) {
+        if (openedCardsArray.length === 2) {
             const firstOpenedCardIcon = openedCardsArray[0].children[0];
             const secondOpenedCardIcon = openedCardsArray[1].children[0];
             const firstOpenedCardIconClasses = firstOpenedCardIcon.classList;
             const secondOpenedCardIconClasses = secondOpenedCardIcon.classList;
-            let haveAllClasses = true;
+            let iconsHaveTheSameClasses = true;
+            const iconsHaveTheSameNumberOfClasses = firstOpenedCardIconClasses.length === secondOpenedCardIconClasses.length;
 
             for (const iconClass of firstOpenedCardIconClasses) {
                 if(!secondOpenedCardIconClasses.contains(iconClass)){
-                    haveAllClasses = false;
+                    iconsHaveTheSameClasses = false;
                 }
             }
 
-            if(haveAllClasses && firstOpenedCardIconClasses.length === secondOpenedCardIconClasses.length ){
-                // leave and count
-            } else {
+            if(!iconsHaveTheSameClasses || !iconsHaveTheSameNumberOfClasses){
                 for (const openedCard of openedCardsArray) {
-                    closeCard(openedCard);
+                    setTimeout(() => {
+                        closeCard(openedCard);
+                    }, HIDE_DELAY);
                 }
             }
             openedCardsArray = [];
         }
     });
 }
-
-
