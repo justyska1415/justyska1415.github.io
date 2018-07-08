@@ -1,8 +1,42 @@
 /*
  * Create a list that holds all of your cards
  */
-let cardsOfArray = ['fa-diamond', 'fa-plane', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
 const HIDE_DELAY = 500;
+const NEXT_CLICK_DELAY = 200;
+let cardsOfArray = ['fa-diamond', 'fa-plane', 'fa-anchor', 'fa-bolt', 'fa-cube', 'fa-anchor', 'fa-leaf', 'fa-bicycle', 'fa-diamond', 'fa-bomb', 'fa-leaf', 'fa-bomb', 'fa-bolt', 'fa-bicycle', 'fa-plane', 'fa-cube'];
+const deck = document.querySelector("ul.deck");
+const allCardsOpened = 16;
+const restart = document.querySelector(".restart");
+restart.addEventListener("click", function (event) {
+    setupGame();
+});
+const moveCounter = {
+    numberOfMoves: 0,
+    reset: function () {
+        this.numberOfMoves = 0;
+        this.updateUI();
+    },
+    increment: function () {
+        this.numberOfMoves += 1;
+        this.updateUI();
+    },
+    updateUI: function () {
+        const movesCounterElem = document.querySelector(".moves");
+        movesCounterElem.innerHTML = this.numberOfMoves;
+    }
+};
+const clickBlocker = {
+    lastClickTime: undefined,
+    canClick: function () {
+        const currentTime = (new Date()).getTime();
+        let result = true;
+        if (this.lastClickTime) {
+            result = (currentTime - this.lastClickTime) > NEXT_CLICK_DELAY;
+        }
+        this.lastClickTime = currentTime;
+        return result;
+    }
+}
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -25,18 +59,22 @@ function shuffle(array) {
     return array;
 }
 
-const shaffledCardsClasses = shuffle(cardsOfArray);
-const deck = document.querySelector("ul.deck");
-deck.innerHTML = '';
+function setupGame() {
+    moveCounter.reset();
+    const shaffledCardsClasses = shuffle(cardsOfArray);
+    deck.innerHTML = '';
 
-for (const cardClass of shaffledCardsClasses) {
-    const cardElem = document.createElement('li');
-    cardElem.classList.add('card');
-    const icon = document.createElement('i');
-    icon.classList.add('fa', cardClass);
-    cardElem.appendChild(icon);
-    deck.appendChild(cardElem);
+    for (const cardClass of shaffledCardsClasses) {
+        const cardElem = document.createElement('li');
+        cardElem.classList.add('card');
+        const icon = document.createElement('i');
+        icon.classList.add('fa', cardClass);
+        cardElem.appendChild(icon);
+        deck.appendChild(cardElem);
+    }
+    setupCards(deck);
 }
+setupGame();
 
 /*
  * set up the event listener for a card. If a card is clicked:
@@ -48,47 +86,70 @@ for (const cardClass of shaffledCardsClasses) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-
-const openCard = function (card) {
-    card.classList.add("open", "show");
-};
-const closeCard = function (card) {
-    card.classList.remove("open", "show");
-};
-let openedCardsArray = [];
-
-const cardElems = deck.children;
-for (const cardElem of cardElems) {
-    cardElem.addEventListener('click', function (event) {
-        const clickedCard = event.target;
-
-        if (openedCardsArray.length < 2) {
-            openedCardsArray.push(clickedCard);
-            openCard(clickedCard);
-        }
-
-        if (openedCardsArray.length === 2) {
-            const firstOpenedCardIcon = openedCardsArray[0].children[0];
-            const secondOpenedCardIcon = openedCardsArray[1].children[0];
-            const firstOpenedCardIconClasses = firstOpenedCardIcon.classList;
-            const secondOpenedCardIconClasses = secondOpenedCardIcon.classList;
-            let iconsHaveTheSameClasses = true;
-            const iconsHaveTheSameNumberOfClasses = firstOpenedCardIconClasses.length === secondOpenedCardIconClasses.length;
-
-            for (const iconClass of firstOpenedCardIconClasses) {
-                if(!secondOpenedCardIconClasses.contains(iconClass)){
-                    iconsHaveTheSameClasses = false;
-                }
+function setupCards(deck) {
+    let openedCardsArray = [];
+    const openCard = function (card) {
+        card.classList.add("open", "show");
+    };
+    const closeCard = function (card) {
+        card.classList.remove("open", "show");
+    };
+    const isCardOpened = function (card) {
+        card.classList.contains("open");
+    };
+    const cardElems = deck.children;
+    for (const cardElem of cardElems) {
+        cardElem.addEventListener('click', function (event) {
+            let clickedCard = event.target;
+            if (clickedCard.nodeName !== "LI") {
+                clickedCard = clickedCard.parentNode;
+            }
+            const shouldIgnore = isCardOpened(clickedCard) || openedCardsArray.length > 1 || !clickBlocker.canClick();
+            if (shouldIgnore) {
+                return;
             }
 
-            if(!iconsHaveTheSameClasses || !iconsHaveTheSameNumberOfClasses){
-                for (const openedCard of openedCardsArray) {
-                    setTimeout(() => {
-                        closeCard(openedCard);
-                    }, HIDE_DELAY);
+            if (openedCardsArray.length < 2) {
+                const oneCardOpened = openedCardsArray.length === 1;
+                const clickedTheSameCard = openedCardsArray[0] === clickedCard;
+                if (oneCardOpened && clickedTheSameCard) {
+                    return;
                 }
+
+                moveCounter.increment();
+                openedCardsArray.push(clickedCard);
+                openCard(clickedCard);
             }
-            openedCardsArray = [];
-        }
-    });
+
+            if (openedCardsArray.length === 2) {
+                const firstOpenedCardIcon = openedCardsArray[0].children[0];
+                const secondOpenedCardIcon = openedCardsArray[1].children[0];
+                const firstOpenedCardIconClasses = firstOpenedCardIcon.classList;
+                const secondOpenedCardIconClasses = secondOpenedCardIcon.classList;
+                let iconsHaveTheSameClasses = true;
+                const iconsHaveTheSameNumberOfClasses = firstOpenedCardIconClasses.length === secondOpenedCardIconClasses.length;
+
+                for (const iconClass of firstOpenedCardIconClasses) {
+                    if (!secondOpenedCardIconClasses.contains(iconClass)) {
+                        iconsHaveTheSameClasses = false;
+                    }
+                }
+
+                if (!iconsHaveTheSameClasses || !iconsHaveTheSameNumberOfClasses) {
+                    for (const openedCard of openedCardsArray) {
+                        setTimeout(() => {
+                            closeCard(openedCard);
+                        }, HIDE_DELAY);
+                    }
+                }
+                openedCardsArray = [];
+            }
+
+           if(document.querySelectorAll("li.open").length === allCardsOpened){  
+              setTimeout(() => {
+              alert("CONGRATULATIONS!");}, HIDE_DELAY );
+                ;
+           }
+        });
+    }
 }
