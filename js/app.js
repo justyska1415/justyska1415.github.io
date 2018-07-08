@@ -139,7 +139,7 @@ function setupCards(deck) {
             if (document.querySelectorAll("li.match").length === allCardsOpened) {
                 setTimeout(() => {
                     alert("CONGRATULATIONS!");
-                }, HIDE_DELAY);
+                }, 400);
             }
         });
     }
